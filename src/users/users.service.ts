@@ -22,9 +22,22 @@ export class UsersService {
     });
   }
 
+  // Creates a user entity and persists it in the database.
   async create(data: Partial<User>): Promise<User> {
     const user = this.userRepository.create(data);
 
     return this.userRepository.save(user);
+  }
+
+  // Updates selected user fields, such as verification status or password.
+  async updateById(id: number, data: Partial<User>): Promise<User> {
+    await this.userRepository.update(id, data);
+    const updatedUser = await this.findById(id);
+
+    if (!updatedUser) {
+      throw new Error('User was not found after update');
+    }
+
+    return updatedUser;
   }
 }

@@ -96,3 +96,31 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
+## Authentication API
+
+The project includes email-based authentication with bcrypt password hashing, JWT sessions, and one-time passwords (OTP).
+
+### Environment setup
+
+Copy `.env.example` to `.env` and set the MySQL and SMTP values. When SMTP values are missing during local development, the OTP is printed in the NestJS terminal; configure SMTP before production use.
+
+```bash
+cp .env.example .env
+npm install
+npm run start:dev
+```
+
+### Endpoints
+
+| Method | Route | Purpose |
+|---|---|---|
+| POST | `/auth/signup` | Creates a pending account and sends a sign-up OTP. Body: `name`, `email`, `password`, `confirmPassword`, optional `image`. |
+| POST | `/auth/signup/confirm-otp` | Confirms the sign-up OTP. Body: `email`, `otp`. |
+| POST | `/auth/login` | Logs in a verified user. Body: `email`, `password`. |
+| POST | `/auth/forgot-password` | Sends a password-reset OTP. Body: `email`. |
+| POST | `/auth/forgot-password/verify-otp` | Verifies the reset OTP and returns a short-lived `resetToken`. Body: `email`, `otp`. |
+| POST | `/auth/forgot-password/reset` | Sets the new password. Body: `resetToken`, `password`, `confirmPassword`. |
+
+Passwords are never stored in plain text. OTPs are stored as bcrypt hashes, expire after ten minutes, and are cleared after successful confirmation. The `image` field currently accepts a URL or data URL; a dedicated object-storage upload can be added later without changing the authentication flow.
