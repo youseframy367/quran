@@ -27,10 +27,12 @@ export class User {
   image: string | null;
 
   // These fields remain available for future social-login integrations.
-  @Column({ nullable: true })
+  // Explicit varchar is required because the TypeScript union would reflect as Object.
+  @Column({ type: 'varchar', nullable: true })
   googleId: string | null;
 
-  @Column({ nullable: true })
+  // Explicit varchar keeps the nullable social-login identifier MySQL-compatible.
+  @Column({ type: 'varchar', nullable: true })
   facebookId: string | null;
 
   // Users cannot log in until they confirm the email OTP.
@@ -38,7 +40,8 @@ export class User {
   isEmailVerified: boolean;
 
   // Only a hash of the latest OTP is stored in the database.
-  @Column({ nullable: true })
+  // Explicit varchar prevents TypeORM from inferring Object for this nullable string.
+  @Column({ type: 'varchar', nullable: true })
   otpHash: string | null;
 
   // OTPs expire after a short period and cannot be reused.
@@ -46,7 +49,8 @@ export class User {
   otpExpiresAt: Date | null;
 
   // This prevents a sign-up OTP from being used for password reset.
-  @Column({ nullable: true })
+  // Explicit varchar stores whether the OTP is for signup or password reset.
+  @Column({ type: 'varchar', nullable: true })
   otpPurpose: string | null;
 
   @CreateDateColumn()
